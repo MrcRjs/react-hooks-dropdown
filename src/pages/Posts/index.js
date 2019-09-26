@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 import ListGroup from 'react-bootstrap/ListGroup'
+import Dropdown from 'react-bootstrap/Dropdown'
 import './index.scss'
 
 // file obtained by: curl https://jsonplaceholder.typicode.com/posts > posts.json
@@ -19,6 +20,7 @@ const Posts = () => {
     const [postList] = useState(somePosts);
     const [categoryList] = useState(categories);
     const [selectedCategory, setCategory] = useState("");
+    const [textLength, setTextLength] = useState(80);
 
     const handleOptionChange = changeEvent => {
         setCategory(changeEvent.target.value);
@@ -29,14 +31,18 @@ const Posts = () => {
         setCategory("");
     };
 
+    const handleTextLength = textLengthEvent => {
+        setTextLength(textLengthEvent);
+    };
+
     const thePosts = postList.map(post => {
         if (selectedCategory === "" || selectedCategory === post.category) {
             return <ListGroup.Item
                 key={post.id}
                 variant="flush">
                 <h5>{post.title}</h5>
-                {post.body.substr(0, 80) + '...'}
-                <small><strong>{post.category}</strong></small>
+                {post.body.substr(0, textLength) + '...'}
+                <p><small><strong>{post.category}</strong></small></p>
             </ListGroup.Item>
         } else {
             return null;
@@ -84,7 +90,18 @@ const Posts = () => {
                 <Row>
                     <Col sm={12}>
                         <Card>
-                            <Card.Title>Posts</Card.Title>
+                            <Card.Title>Posts <small>(text length: {textLength})</small></Card.Title>
+                            <Dropdown onSelect={handleTextLength} className="mx-2 mb-2">
+                                <Dropdown.Toggle  className={"mx-2"} variant={"primary"} id={"post-text-length"}>
+                                    Set Text Length
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item eventKey={40}>40 Chars</Dropdown.Item>
+                                    <Dropdown.Item eventKey={80}>80 Chars</Dropdown.Item>
+                                    <Dropdown.Item eventKey={120}>120 Chars</Dropdown.Item>
+                                    <Dropdown.Item eventKey={160}>160 Chars</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
                             <ListGroup>
                                 {thePosts}
                             </ListGroup>
